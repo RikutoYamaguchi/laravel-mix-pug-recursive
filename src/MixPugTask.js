@@ -25,12 +25,16 @@ class MixPugTask extends Task {
                 locals: {},
                 pug: null,
                 ext: '.html',
-                excludePath: null
+                excludePath: null,
+                pugRootPath: ''
             };
         }
-        
+
         // Set destination folder
         this.dest = dest;
+
+        // Set source pug files path
+        this.pugRootPath = options.pugRootPath;
 
         // Set pug options
         this.pugOptions = options.pug;
@@ -165,8 +169,9 @@ class MixPugTask extends Task {
     prepareAssets(src) {
         let file = new File(src);
         let pathFromBase = this.relativePathFromSource(file.base(), this.excludePath);
-        let baseDir = (new File(path.join(this.dest, pathFromBase))).absolutePath;
-        
+        let outputFileBasePath = pathFromBase.replace(this.pugRootPath, '')
+        let baseDir = (new File(path.join(this.dest, outputFileBasePath))).absolutePath;
+
         if (!File.exists(baseDir)) {
             mkdirp.sync(baseDir);
         }
